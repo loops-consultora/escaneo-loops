@@ -52,6 +52,21 @@ const todayISO = (iso) => {
 };
 const esc = (s) => String(s == null ? "" : s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
 
+// Sube un PDF (base64) a la columna de archivo de un ítem existente. Devuelve true/false.
+async function uploadPdfToItem(TOKEN, itemId, pdfBase64, pdfNombre, nombre) {
+  try {
+    const bytes = Buffer.from(pdfBase64, "base64");
+    const fileName = (pdfNombre || `Escaneo ${nombre || itemId}.pdf`).toString();
+    const fd = new FormData();
+    fd.append("query", `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "${COL.pdf}", file: $file) { id } }`);
+    fd.append("map", JSON.stringify({ "0": ["variables.file"] }));
+    fd.append("0", new Blob([bytes], { type: "application/pdf" }), fileName);
+    const rf = await fetch(MONDAY_FILE, { method: "POST", headers: { Authorization: TOKEN, "API-Version": "2024-10" }, body: fd });
+    const jf = await rf.json();
+    return !jf.errors;
+  } catch { return false; }
+}
+
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -63,6 +78,14 @@ export default async function handler(req, res) {
   let lead = req.body;
   if (typeof lead === "string") { try { lead = JSON.parse(lead); } catch { lead = {}; } }
   if (!lead || typeof lead !== "object") lead = {};
+
+  // PASO 2 (opcional): solo adjuntar el PDF a un ítem YA creado (el escaneo lo llama aparte).
+  if (lead.attachOnly && lead.itemId) {
+    const T = process.env.MONDAY_TOKEN;
+    let pdfAdjunto = false;
+    if (T && lead.pdfBase64) pdfAdjunto = await uploadPdfToItem(T, lead.itemId, lead.pdfBase64, lead.pdfNombre, "");
+    return res.status(200).json({ ok: true, monday: { itemId: lead.itemId, pdfAdjunto } });
+  }
 
   const nombre = (lead.empresa || "").toString().trim() || "Escaneo sin empresa";
   const nivelLabel = NIVEL_LABEL[Number(lead.nivelNum)] || "";
@@ -102,21 +125,9 @@ export default async function handler(req, res) {
       if (j.errors) throw new Error(JSON.stringify(j.errors));
       itemId = j.data.create_item.id;
 
-      // adjuntar PDF
+      // adjuntar PDF si vino en el mismo request (compatibilidad; el flujo nuevo lo manda aparte)
       let pdfOk = false;
-      if (lead.pdfBase64) {
-        try {
-          const bytes = Buffer.from(lead.pdfBase64, "base64");
-          const fileName = (lead.pdfNombre || `Escaneo ${nombre}.pdf`).toString();
-          const fd = new FormData();
-          fd.append("query", `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "${COL.pdf}", file: $file) { id } }`);
-          fd.append("map", JSON.stringify({ "0": ["variables.file"] }));
-          fd.append("0", new Blob([bytes], { type: "application/pdf" }), fileName);
-          const rf = await fetch(MONDAY_FILE, { method: "POST", headers: { Authorization: TOKEN, "API-Version": "2024-10" }, body: fd });
-          const jf = await rf.json();
-          pdfOk = !jf.errors;
-        } catch { pdfOk = false; }
-      }
+      if (lead.pdfBase64) pdfOk = await uploadPdfToItem(TOKEN, itemId, lead.pdfBase64, lead.pdfNombre, nombre);
       result.monday = { itemId, pdfAdjunto: pdfOk };
     } catch (e) {
       result.monday = { error: String(e) };

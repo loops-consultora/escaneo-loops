@@ -612,8 +612,15 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   @media(max-width:640px){.ladder{grid-template-columns:1fr}}
   /* tres frentes: plata / tiempo / cabeza */
   .frentes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:4px 0 6px}
-  .frente{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px;opacity:.5;transition:.2s}
-  .frente.on{opacity:1;border-color:var(--greige)}
+  .frente{background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;padding:16px;opacity:1;transition:.2s}
+  .frente.on{border-color:var(--greige)}
+  /* semáforo por cantidad de dolores marcados */
+  .frente.sem-green{border-color:#3ec08a;box-shadow:inset 0 0 0 1px #3ec08a}
+  .frente.sem-yellow{border-color:#e0a53c;box-shadow:inset 0 0 0 1px #e0a53c}
+  .frente.sem-red{border-color:#e5615f;box-shadow:inset 0 0 0 1px #e5615f}
+  .frente.sem-green .fc{color:#5fe0ad}
+  .frente.sem-yellow .fc{color:#ffc266}
+  .frente.sem-red .fc{color:#ff8098}
   .frente .fi{font-size:22px}
   .frente .fl{font-weight:800;font-size:16px;margin-top:6px}
   .frente .fn{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.4}
@@ -649,11 +656,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     border:1px solid rgba(37,211,102,.35);border-radius:14px;padding:18px 20px;margin-top:16px}
   .wa-txt b{display:block;font-size:15.5px;color:var(--ink)}
   .wa-txt span{font-size:13px;color:var(--muted)}
-  .btn-wa{display:inline-flex;align-items:center;gap:9px;background:#25D366;color:#0a2e18;border:0;cursor:pointer;
-    font-weight:800;font-size:15px;padding:13px 22px;border-radius:11px;white-space:nowrap;
+  .btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:#25D366;color:#0a2e18;border:0;cursor:pointer;
+    font-weight:800;font-size:15px;padding:13px 22px;border-radius:11px;line-height:1.3;text-align:center;
     box-shadow:0 8px 20px rgba(37,211,102,.3);transition:transform .08s ease,filter .2s}
+  .btn-wa svg{flex:none}
   .btn-wa:hover{filter:brightness(1.05)} .btn-wa:active{transform:translateY(1px)}
-  @media(max-width:560px){.wa-cta{flex-direction:column;align-items:stretch;text-align:center}.btn-wa{justify-content:center}}
+  @media(max-width:560px){.wa-cta{flex-direction:column;align-items:stretch;text-align:center}.btn-wa{width:100%}}
   .hidden{display:none}
   .foot{color:var(--muted);font-size:11.5px;text-align:center;margin-top:26px}
   @media print{
@@ -831,7 +839,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
         <button class="btn ghost sm" onclick="restart()">↺ Nuevo escaneo</button>
         <button class="btn sm" onclick="downloadPdf()">⬇ Descargar PDF</button>
       </div>
-      <div class="foot">LOOPS · Construction Operating System — Gobernanza Operativa · SOPs · Tableros de Control · Previsibilidad</div>
+      <div class="foot">LOOPS · Sistema Operativo Estratégico — Gobernanza Operativa · Procesos Escritos · Tableros de Control · Previsibilidad</div>
     </div>
   </section>
 
@@ -864,14 +872,14 @@ const CONFIG = {
 
 /* ============================ DATA ============================ */
 const PILLARS = [
-  { key:"A", title:"La Libertad del Dueño", subtitle:"Gobernanza y Delegación · Matriz RACI", weight:3.0,
+  { key:"A", title:"La Libertad del Dueño", subtitle:"Gobernanza y Delegación · Roles y responsabilidades claras", weight:3.0,
     desc:"Cuánto depende la operación de vos. Mide el costo del micromanagement y del cuello de botella en las decisiones.",
     leakIcon:"🧭",
     leakTitle:"El dueño es el cuello de botella",
-    leakText:"Las decisiones pasan por vos y el equipo no tiene autonomía. Cada hora tuya apagando incendios es rentabilidad que no se genera y crecimiento que no ocurre. Sin Matriz RACI, la empresa no escala más allá de tu agenda.",
+    leakText:"Las decisiones pasan por vos y el equipo no tiene autonomía. Cada hora tuya apagando incendios es rentabilidad que no se genera y crecimiento que no ocurre. Sin roles y responsabilidades claras, la empresa no escala más allá de tu agenda.",
     q:[
       {t:"¿Cuántas decisiones que no deberían llegar a tu escritorio terminan, igual, en tus manos?", p:"Cada firma tuya de rutina es tiempo de dueño mal pagado: horas caras que no generan un peso de margen nuevo.", a1:"Casi todas pasan por mí", a5:"El equipo resuelve con límites claros"},
-      {t:"Si hoy tuvieras que decir quién responde por cada proceso, ¿podrías, o todo termina apuntándote a vos?", p:"Sin Matriz RACI no hay a quién pedirle cuentas. El único responsable de todo, para bien y para mal, sos vos.", a1:"Todo apunta a mí", a5:"RACI formal y vigente"},
+      {t:"Si hoy tuvieras que decir quién responde por cada proceso, ¿podrías, o todo termina apuntándote a vos?", p:"Sin roles y responsabilidades claras no hay a quién pedirle cuentas. El único responsable de todo, para bien y para mal, sos vos.", a1:"Todo apunta a mí", a5:"Roles definidos y en uso"},
       {t:"Si desaparecés dos semanas sin contacto, ¿volvés a una empresa funcionando o a un incendio?", p:"Una operación que se prende fuego sin vos no es una empresa: es un empleo que te pagás carísimo.", a1:"Vuelvo a un incendio", a5:"Sigue igual, hay protocolos"},
       {t:"¿Cuántas horas por semana se te van apagando incendios que no deberían ni existir?", p:"Multiplicá esas horas por lo que vale tu hora. Eso es lo que te cuesta al año seguir sin delegar.", a1:"Más de 15 h", a5:"Menos de 2 h"},
       {t:"¿Tu equipo puede decidir y gastar sin llamarte, o sos el semáforo de absolutamente todo?", p:"Si sos el cuello de botella, la empresa crece hasta donde llega tu agenda. Ni un metro cuadrado más.", a1:"Soy el semáforo de todo", a5:"Tienen límites y los respetan"},
@@ -890,13 +898,13 @@ const PILLARS = [
       {t:"¿Comprás con comparativa y orden de compra, o 'al de siempre' porque no hay tiempo para otra cosa?", p:"Comprar por costumbre es regalar margen en silencio: nunca vas a saber cuánto de más pagaste.", a1:"Al de siempre", a5:"OC y comparativa formal"},
       {t:"¿Podés decirme HOY el margen real de cada obra en curso, o recién lo vas a saber cuando esté todo hecho?", p:"Si el margen recién aparece al final, no lo estás gestionando: te estás enterando cuando ya no hay vuelta.", a1:"Solo al final", a5:"Margen vivo por obra"}
     ]},
-  { key:"C", title:"La Empresa sin Héroes", subtitle:"Estandarización y SOPs", weight:3.0,
+  { key:"C", title:"La Empresa sin Héroes", subtitle:"Estandarización y procesos escritos", weight:3.0,
     desc:"Mide si el resultado depende de procesos repetibles o del esfuerzo heroico de ciertas personas. La dependencia individual es riesgo patrimonial.",
     leakIcon:"📋",
     leakTitle:"Dependencia de personas, no de procesos",
-    leakText:"El conocimiento vive en la cabeza de la gente y la calidad depende de quién ejecuta. Esto produce retrabajos, errores que se repiten obra tras obra y un riesgo patrimonial enorme: si se va una persona clave, se va el know-how. Sin SOPs, cada obra reinventa la rueda y paga el costo.",
+    leakText:"El conocimiento vive en la cabeza de la gente y la calidad depende de quién ejecuta. Esto produce retrabajos, errores que se repiten obra tras obra y un riesgo patrimonial enorme: si se va una persona clave, se va el know-how. Sin procesos escritos, cada obra reinventa la rueda y paga el costo.",
     q:[
-      {t:"Tus procesos clave, ¿están escritos o viven 'en la cabeza' de la gente que un día se puede ir?", p:"Conocimiento no documentado es patrimonio que puede renunciar el lunes y llevarse tu operación puerta afuera.", a1:"Todo en la cabeza de la gente", a5:"SOPs documentados y en uso"},
+      {t:"Tus procesos clave, ¿están escritos o viven 'en la cabeza' de la gente que un día se puede ir?", p:"Conocimiento no documentado es patrimonio que puede renunciar el lunes y llevarse tu operación puerta afuera.", a1:"Todo en la cabeza de la gente", a5:"Procesos escritos y en uso"},
       {t:"¿Cuánto de tu empresa se va caminando el día que renuncia tu persona más importante?", p:"Depender de un insustituible no es tener un crack: es tener una bomba de tiempo con tu rentabilidad adentro.", a1:"Se va lo crítico", a5:"Mínimo, está documentado"},
       {t:"A los que entran, ¿los formás con un estándar o los mandás a 'mirar cómo lo hace el de al lado'?", p:"Cada ingreso que aprende mirando copia también los vicios, tarda el doble en rendir y comete los mismos errores.", a1:"Miran al de al lado", a5:"Onboarding estandarizado"},
       {t:"Que una tarea salga bien, ¿depende del proceso o de que justo la agarró el que sabe?", p:"Si la calidad depende de quién la hizo, no tenés una empresa: tenés suerte. Y la suerte no escala ni se vende.", a1:"Depende de quién la haga", a5:"El proceso garantiza el resultado"},
@@ -1215,7 +1223,7 @@ function showResults(){
     stT.textContent='Estado general de los pilares';
     stB.innerHTML=`<div class="leak" style="border-left-color:var(--c1)"><div class="ic">⚠️</div>
       <div><b>Hoy ningún pilar está funcionando</b>
-      <p>Los cinco pilares están en zona crítica: no hay todavía una base consolidada sobre la cual apoyarse. La operación necesita estructura desde la raíz, que es exactamente lo que el Construction Operating System de LOOPS reordena primero.</p></div></div>`;
+      <p>Los cinco pilares están en zona crítica: no hay todavía una base consolidada sobre la cual apoyarse. La operación necesita estructura desde la raíz, que es exactamente lo que el Sistema Operativo Estratégico de LOOPS reordena primero.</p></div></div>`;
   }
 
   // fugas / áreas a mejorar
@@ -1257,9 +1265,12 @@ function showResults(){
     frt.style.display=''; frb.style.display='';
     frb.innerHTML = FR.map(f=>{
       const n=byCat(f.k).length, tot=PAINS.filter(p=>p.cat===f.k).length;
-      const on = n>0;
-      return `<div class="frente${on?' on':''}"><div class="fi">${f.ic}</div><div class="fl">${f.label}</div>
-        <div class="fn">${f.desc}</div><div class="fc">${on? n+' de '+tot+' dolores marcados' : 'No lo marcaste'}</div></div>`;
+      const r = tot ? n/tot : 0;
+      // Semáforo: verde = nada marcado (bajo control) · amarillo = algunos · rojo = mayoría/todos
+      const sem = r===0 ? 'sem-green' : (r<=0.5 ? 'sem-yellow' : 'sem-red');
+      const foot = r===0 ? ('Bajo control · 0 de '+tot) : (n+' de '+tot+' dolores marcados');
+      return `<div class="frente ${sem}"><div class="fi">${f.ic}</div><div class="fl">${f.label}</div>
+        <div class="fn">${f.desc}</div><div class="fc">${foot}</div></div>`;
     }).join('');
   } else { frt.style.display='none'; frb.style.display='none'; }
 
@@ -1285,24 +1296,33 @@ async function enviarEscaneoAMonday(lead){
   const url=(CONFIG.integracion&&CONFIG.integracion.webhookUrl||'').trim();
   if(!url || _yaEnviado) return;      // sin webhook (uso offline) => no envía
   _yaEnviado=true;
+  const H={'Content-Type':'application/json'};
   try{
-    let pdfBase64=null, pdfNombre=null;
-    if(CONFIG.integracion.enviarPDF){
+    // PASO 1 — DATOS PRIMERO: crea el ítem en Monday al instante, sin depender del PDF.
+    // Así el lead entra siempre, aunque el celular tarde o falle al armar el PDF.
+    let itemId=null;
+    try{
+      const r=await fetch(url,{method:'POST',headers:H,body:JSON.stringify(lead)});
+      const j=await r.json().catch(()=>({}));
+      itemId=j && j.monday && j.monday.itemId;
+    }catch(e){ return; }   // si ni esto sale, no hay ítem al cual adjuntar
+
+    // PASO 2 — PDF DESPUÉS (best-effort, con límite de tiempo): se adjunta al ítem ya creado.
+    if(CONFIG.integracion.enviarPDF && itemId){
       try{
-        const blob=await genPdfBlob();
-        pdfNombre=scanBaseName()+'.pdf';
-        pdfBase64=await new Promise((res,rej)=>{
-          const r=new FileReader();
-          r.onload=()=>res(String(r.result).split(',')[1]);   // solo el base64, sin el prefijo data:
-          r.onerror=rej; r.readAsDataURL(blob);
+        const blob=await Promise.race([
+          genPdfBlob(),
+          new Promise((_,rej)=>setTimeout(()=>rej(new Error('pdf-timeout')),20000))
+        ]);
+        const pdfBase64=await new Promise((res,rej)=>{
+          const fr=new FileReader();
+          fr.onload=()=>res(String(fr.result).split(',')[1]);
+          fr.onerror=rej; fr.readAsDataURL(blob);
         });
-      }catch(e){ /* si el PDF falla, igual mandamos los datos */ }
+        await fetch(url,{method:'POST',headers:H,
+          body:JSON.stringify({attachOnly:true, itemId, pdfBase64, pdfNombre:scanBaseName()+'.pdf'})});
+      }catch(e){ /* el ítem ya quedó creado; el PDF es opcional */ }
     }
-    await fetch(url,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(Object.assign({}, lead, {pdfBase64, pdfNombre}))
-    });
   }catch(e){ /* silencioso: la experiencia del usuario no depende de esto */ }
 }
 
@@ -1379,13 +1399,13 @@ function buildExec(emp,lev,gPct,per,eLow,eHigh,erosion,fact,pains,px,roi){
 
   let p3;
   if(lev.n===3){
-    p3=`<p><b>El camino.</b> No necesitás una cirugía operativa: ya hiciste el trabajo difícil. El próximo paso es <b>consolidar y escalar</b> —sostener este nivel mientras crecés en volumen, sin que la calidad ni el margen se resientan—. Ahí es donde el <b>Construction Operating System de LOOPS</b> blinda lo que ya funciona y prepara la estructura para el próximo salto.</p>`;
+    p3=`<p><b>El camino.</b> No necesitás una cirugía operativa: ya hiciste el trabajo difícil. El próximo paso es <b>consolidar y escalar</b> —sostener este nivel mientras crecés en volumen, sin que la calidad ni el margen se resientan—. Ahí es donde el <b>Sistema Operativo Estratégico de LOOPS</b> blinda lo que ya funciona y prepara la estructura para el próximo salto.</p>`;
   } else if(lev.n===2){
-    p3=`<p><b>El camino.</b> La buena noticia es que ya tenés una base; no partís de cero. Lo que falta es cerrar las fugas con arquitectura: control económico y de compras en tiempo real, SOPs que hagan el resultado independiente de las personas y Tableros de Control que te den previsibilidad. Es exactamente lo que instala el <b>Construction Operating System de LOOPS</b>, y te devuelve <b>margen, tiempo y tranquilidad</b>.${payLine}</p>`;
+    p3=`<p><b>El camino.</b> La buena noticia es que ya tenés una base; no partís de cero. Lo que falta es cerrar las fugas con arquitectura: control económico y de compras en tiempo real, procesos escritos que hagan el resultado independiente de las personas y Tableros de Control que te den previsibilidad. Es exactamente lo que instala el <b>Sistema Operativo Estratégico de LOOPS</b>, y te devuelve <b>margen, tiempo y tranquilidad</b>.${payLine}</p>`;
   } else {
-    p3=`<p><b>El camino.</b> Nada de esto se resuelve con más esfuerzo personal —ese es justamente el síntoma del Nivel 1—. Se resuelve con arquitectura: Gobernanza Operativa con Matriz RACI para sacarte del cuello de botella, control económico y de compras en tiempo real, SOPs y Tableros de Control. Es exactamente lo que instala el <b>Construction Operating System de LOOPS</b>, y te devuelve <b>margen, tiempo y tranquilidad</b>.${payLine} La pregunta no es si podés permitirte implementarlo, sino cuánto más vas a seguir resignando si no lo hacés.</p>`;
+    p3=`<p><b>El camino.</b> Nada de esto se resuelve con más esfuerzo personal —ese es justamente el síntoma del Nivel 1—. Se resuelve con arquitectura: Gobernanza Operativa con roles y responsabilidades claras para sacarte del cuello de botella, control económico y de compras en tiempo real, procesos escritos y Tableros de Control. Es exactamente lo que instala el <b>Sistema Operativo Estratégico de LOOPS</b>, y te devuelve <b>margen, tiempo y tranquilidad</b>.${payLine} La pregunta no es si podés permitirte implementarlo, sino cuánto más vas a seguir resignando si no lo hacés.</p>`;
   }
-  const segLine = seg ? `<p><b>En tu caso puntual.</b> Para ${seg.obra}, esto se juega en ${seg.foco}. Ahí es donde el <b>Construction Operating System de LOOPS</b> ordena la operación y protege el margen.</p>` : '';
+  const segLine = seg ? `<p><b>En tu caso puntual.</b> Para ${seg.obra}, esto se juega en ${seg.foco}. Ahí es donde el <b>Sistema Operativo Estratégico de LOOPS</b> ordena la operación y protege el margen.</p>` : '';
   return traduccion+p1+p2+pCostos+p3+segLine;
 }
 
@@ -1438,9 +1458,24 @@ async function genPdfBlob(){
   if(!(window.html2canvas && window.jspdf)) throw new Error('no libs');
   const card=document.querySelector('#results .card');
   const BG='#14202b';
+  // Forzamos layout de escritorio y ancho fijo SOLO durante la captura, para que el PDF
+  // salga igual en celular y en computadora (mismas columnas y proporciones).
+  const pdfStyle=document.createElement('style');
+  pdfStyle.textContent=`
+    #results .card{width:820px!important;max-width:none!important}
+    #results .score-hero{grid-template-columns:210px 1fr!important}
+    #results .grid2{grid-template-columns:1fr 1fr!important}
+    #results .pillars-list{grid-template-columns:1fr 1fr!important}
+    #results .ladder{grid-template-columns:repeat(3,1fr)!important}
+    #results .frentes{grid-template-columns:repeat(3,1fr)!important}
+    #results .radar-wrap{grid-template-columns:1fr 1fr!important}
+    #results .kpis{grid-template-columns:repeat(3,1fr)!important}`;
+  document.head.appendChild(pdfStyle);
+  try{
+  card.getBoundingClientRect();   // forzar reflow con el layout de escritorio
   // Resolución dinámica: apuntamos a 3x (máxima nitidez) y sólo bajamos si el canvas sería demasiado grande
   const rect0=card.getBoundingClientRect();
-  const MAXAREA=32e6;
+  const MAXAREA=16e6;   // tope seguro también para navegadores móviles (límite de canvas)
   let scaleUsed=3;
   if(rect0.width*card.scrollHeight*scaleUsed*scaleUsed>MAXAREA)
     scaleUsed=Math.max(2, Math.sqrt(MAXAREA/(rect0.width*card.scrollHeight)));
@@ -1500,6 +1535,7 @@ async function genPdfBlob(){
     pdf.text('Página '+(i+1)+' de '+pages.length, PW-M, PH-9, {align:'right'});
   });
   return pdf.output('blob');
+  }finally{ pdfStyle.remove(); }
 }
 function downloadBlob(blob,name){
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
