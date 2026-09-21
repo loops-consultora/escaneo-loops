@@ -1281,10 +1281,37 @@ function showResults(){
 
   // Envío automático a Monday (solo si hay webhook configurado — offline no hace nada).
   const margenFuga = valorAnual ? Math.round(valorAnual*(eLow+eHigh)/2/100) : null;
+
+  // Resumen en TEXTO: queda como nota en el ítem de Monday. Así, aunque el PDF no cargue,
+  // el vendedor tiene todo lo necesario para analizar y hablar con el cliente.
+  const fugaTxt = (erosion < CONFIG.erosion.umbralOptimo)
+    ? 'menos del 2% del margen'
+    : (valorAnual
+        ? `${eLow.toFixed(0)}%–${eHigh.toFixed(0)}% del margen (${moneyRange(valorAnual*eLow/100, valorAnual*eHigh/100)}/año)`
+        : `${eLow.toFixed(0)}%–${eHigh.toFixed(0)}% del margen`);
+  const pilaresTxt = per.map(x=>`• ${x.p.key} · ${x.p.title}: ${Math.round(x.pc)}/100`).join('\n');
+  const doloresTxt = marked.length ? marked.map(x=>`• ${x.t}${x.a==='mm'?' (más o menos)':''}`).join('\n') : '• (ninguno marcado)';
+  const frentesTxt = FR.map(f=>{ const n=byCat(f.k).length, tot=PAINS.filter(p=>p.cat===f.k).length; return `${f.label} ${n}/${tot}`; }).join(' · ');
+  const contactoLinea = [g('fRef'), g('fEmail'), g('fTel')].filter(Boolean).join(' · ');
+  const resumen =
+`RESUMEN DEL ESCANEO — ${g('fEmpresa')||'Sin empresa'}
+Nivel: ${lev.name} (N${lev.n})  ·  Índice: ${Math.round(globalPct)}/100${g('fSegmento')?'  ·  Segmento: '+g('fSegmento'):''}
+${contactoLinea?('Contacto: '+contactoLinea+'\n'):''}Margen en fuga estimado: ${fugaTxt}
+Obras activas: ${g('fObras')||'—'}  ·  m²: ${g('fM2')||'—'}  ·  Zonas: ${g('fZonas')||'—'}
+
+PUNTAJE POR PILAR:
+${pilaresTxt}
+
+DOLORES RECONOCIDOS (${recognized} de ${PAINS.length}):
+${doloresTxt}
+
+FRENTES (dolores por área): ${frentesTxt}`;
+
   enviarEscaneoAMonday({
     empresa: g('fEmpresa'), segmento: g('fSegmento'), referente: g('fRef'), email: g('fEmail'), telefono: g('fTel'),
     nivelNum: lev.n, nivelNombre: lev.name, indice: Math.round(globalPct),
     margenFuga: margenFuga, obras: g('fObras'), m2: g('fM2'), zonas: g('fZonas'),
+    resumen: resumen,
     fechaISO: new Date().toISOString()
   });
 }
@@ -1473,12 +1500,16 @@ async function genPdfBlob(){
   document.head.appendChild(pdfStyle);
   try{
   card.getBoundingClientRect();   // forzar reflow con el layout de escritorio
-  // Resolución dinámica: apuntamos a 3x (máxima nitidez) y sólo bajamos si el canvas sería demasiado grande
   const rect0=card.getBoundingClientRect();
-  const MAXAREA=16e6;   // tope seguro también para navegadores móviles (límite de canvas)
-  let scaleUsed=3;
-  if(rect0.width*card.scrollHeight*scaleUsed*scaleUsed>MAXAREA)
-    scaleUsed=Math.max(2, Math.sqrt(MAXAREA/(rect0.width*card.scrollHeight)));
+  const cardW=rect0.width, cardH=card.scrollHeight;
+  // Los navegadores móviles limitan el tamaño del canvas (dimensión máx ~4096px). Si el
+  // lienzo se pasa, html2canvas falla y el PDF no se arma. Por eso en celular topeamos la
+  // resolución para que el PDF SÍ se genere; en PC va a 3x (máxima nitidez).
+  const isMobile = (window.matchMedia && window.matchMedia('(pointer:coarse)').matches) || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'');
+  const MAXDIM  = isMobile ? 3800 : 10000;   // dimensión máxima del canvas (px)
+  const MAXAREA = isMobile ? 6e6  : 24e6;    // área máxima del canvas (px²)
+  let scaleUsed = Math.min(3, MAXDIM/cardH, MAXDIM/cardW, Math.sqrt(MAXAREA/(cardW*cardH)));
+  scaleUsed = Math.max(1, scaleUsed);
   const canvas=await html2canvas(card,{backgroundColor:BG,scale:scaleUsed,useCORS:true,ignoreElements:n=>n.classList&&(n.classList.contains('no-print')||n.classList.contains('foot'))});
   const {jsPDF}=window.jspdf;
   const pdf=new jsPDF({unit:'pt',format:'a4',compress:true});

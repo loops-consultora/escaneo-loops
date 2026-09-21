@@ -125,6 +125,20 @@ export default async function handler(req, res) {
       if (j.errors) throw new Error(JSON.stringify(j.errors));
       itemId = j.data.create_item.id;
 
+      // Resumen en texto como NOTA del ítem (respaldo si el PDF no carga).
+      if (lead.resumen) {
+        try {
+          const body = String(lead.resumen)
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+          const uq = `mutation ($item: ID!, $body: String!) { create_update (item_id: $item, body: $body) { id } }`;
+          await fetch(MONDAY_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: TOKEN, "API-Version": "2024-10" },
+            body: JSON.stringify({ query: uq, variables: { item: itemId, body } }),
+          });
+        } catch { /* la nota es opcional */ }
+      }
+
       // adjuntar PDF si vino en el mismo request (compatibilidad; el flujo nuevo lo manda aparte)
       let pdfOk = false;
       if (lead.pdfBase64) pdfOk = await uploadPdfToItem(TOKEN, itemId, lead.pdfBase64, lead.pdfNombre, nombre);
